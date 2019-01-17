@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: BigMitch
- * Date: 11.01.2019
- * Time: 23:47
- */
 
 namespace app\controllers;
 
-
 use app\models\Product;
+use Yii;
 use yii\web\Controller;
 
 class TestController extends Controller
@@ -21,6 +15,8 @@ class TestController extends Controller
     $product->category = 'category';
     $product->name = 'name';
     $product->price = 300;
-    return $this->render('index', ['product' => $product]);
+
+    $data = Yii::$app->test->prop;
+    return $this->render('index', ['data' => $data]);
   }
 }
