@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -11,28 +12,33 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="product-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php Pjax::begin(); ?>
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?php Pjax::begin(); ?>
 
-    <p>
-        <?= Html::a('Create Product', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+  <p>
+    <?= Html::a('Create Product', ['create'], ['class' => 'btn btn-success']) ?>
+  </p>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+  <?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'columns' => [
+      ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'name',
-            'price',
-            ['attribute' => 'created_at',
-              'format' => 'datetime',
-              'contentOptions' => ['class' => 'small']
-            ],
+      'id',
+      ['attribute' => 'name',
+        'value' => function($model) {
+          return Html::a($model->name, ['product/view?id='.$model->id]);
+          },
+        'format' => 'html'
+      ],
+      'price',
+      ['attribute' => 'created_at',
+        'format' => 'datetime',
+        'contentOptions' => ['class' => 'small']
+      ],
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-    <?php Pjax::end(); ?>
+      ['class' => 'yii\grid\ActionColumn'],
+    ],
+  ]); ?>
+  <?php Pjax::end(); ?>
 </div>
