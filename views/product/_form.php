@@ -12,7 +12,8 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true])->dropDownList(['111' => 'First', '222' =>
+      'Second', '333' => 'Third']) ?>
 
     <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
 

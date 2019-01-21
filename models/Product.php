@@ -14,36 +14,47 @@ use Yii;
  */
 class Product extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'product';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public static function tableName()
+  {
+    return 'product';
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['name', 'price', 'created_at'], 'required'],
-            [['created_at'], 'integer'],
-            [['name', 'price'], 'string', 'max' => 50],
-        ];
-    }
+  public function scenarios()
+  {
+    return [
+      self::SCENARIO_DEFAULT => ['name', 'price', 'created_at'],
+    ];
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'price' => 'Price',
-            'created_at' => 'Created At',
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function rules()
+  {
+    return [
+      [['name', 'price', 'created_at'], 'required'],
+      [['created_at'], 'integer'],
+      ['name', 'string', 'max' => 20],
+      ['name', 'filter', 'filter' => function($name) {
+        return strip_tags(trim($name));
+      }],
+      ['price', 'integer', 'min' => 0, 'max' => 1000],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function attributeLabels()
+  {
+    return [
+      'id' => 'ID',
+      'name' => 'Name',
+      'price' => 'Price',
+      'created_at' => 'Created At',
+    ];
+  }
 }
