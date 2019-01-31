@@ -43,6 +43,12 @@ class TestController extends Controller
       'creator_id' => 3,
       'created_at' => time(),
     ])->execute();
+
+    Yii::$app->db->createCommand()->batchInsert('task', ['title', 'description', 'creator_id', 'created_at'], [
+      ['Cinema', 'Alien', 1, time()],
+      ['Theatre', 'Gamlet', 2, time()],
+      ['Meeting', 'Mary', 3, time()],
+    ])->execute();
   }
 
   public function actionSelect()
@@ -54,6 +60,9 @@ class TestController extends Controller
     _log($result);
 
     $result = (new Query())->select('count(1)')->from('user')->all();
+    _log($result);
+
+    $result = (new Query())->from('task')->innerJoin('user', 'task.creator_id = user.creator_id')->all();
     _log($result);
   }
 }
