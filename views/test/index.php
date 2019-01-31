@@ -1,4 +1,4 @@
 <?php
 
-echo $data;
+Yii\helpers\VarDumper::dump($data);
 
