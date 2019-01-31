@@ -62,7 +62,7 @@ class TestController extends Controller
     $result = (new Query())->select('count(1)')->from('user')->all();
     _log($result);
 
-    $result = (new Query())->from('task')->innerJoin('user', 'task.creator_id = user.creator_id')->all();
+    $result = (new Query())->from('task')->innerJoin('user', 'task.creator_id = user.id')->all();
     _log($result);
   }
 }
