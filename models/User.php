@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
@@ -20,10 +21,11 @@ use Yii;
  * @property Task[] $updatedTasks
  * @property TaskUser[] $taskUsers
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
   const RELATION_CREATED_TASKS = 'createdTasks';
 
+  public $password;
   /**
    * {@inheritdoc}
    */
@@ -38,9 +40,9 @@ class User extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['username', 'password_hash', 'creator_id', 'created_at'], 'required'],
+      [['username', 'creator_id', 'created_at'], 'required'],
       [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
-      [['username', 'password_hash', 'auth_key'], 'string', 'max' => 255],
+      [['username', 'password','password_hash', 'auth_key'], 'string', 'max' => 255],
     ];
   }
 
@@ -100,5 +102,30 @@ class User extends \yii\db\ActiveRecord
   public static function find()
   {
     return new \app\models\query\UserQuery(get_called_class());
+  }
+
+  public static function findIdentity($id)
+  {
+    return static::findOne($id);
+  }
+
+  public function getId()
+  {
+
+  }
+
+  public function getAuthKey()
+  {
+
+  }
+
+  public static function findIdentityByAccessToken($token, $type = null)
+  {
+
+  }
+
+  public function validateAuthKey($authKey)
+  {
+
   }
 }
