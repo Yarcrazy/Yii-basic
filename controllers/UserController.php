@@ -112,35 +112,43 @@ class UserController extends Controller
 
   public function actionTest()
   {
-//    $model = new User();
-//    $model->setAttributes([
-//      'username' => 'Nicolas',
-//      'password_hash' => 'teriut98',
-//      'creator_id' => 4,
-//      'created_at' => time(),
-//    ]);
-//    $model->save();
+    $model = new User();
+    $model->setAttributes([
+      'username' => 'Nicolas',
+      'password_hash' => 'teriut98',
+      'creator_id' => 4,
+      'created_at' => time(),
+    ]);
+    $model->save();
 
-//    $model = User::findOne(1);
-//    $task = new Task();
-//    $task->title = 'dinner';
-//    $task->description = 'meat';
-//    $task->created_at = time();
-//    $task->link(User::RELATION_CREATED_TASKS, $model);
-//    $model = User::findOne(2);
-//    $task = new Task();
-//    $task->title = 'sport';
-//    $task->description = 'football';
-//    $task->created_at = time();
-//    $task->link(User::RELATION_CREATED_TASKS, $model);
-//    $model = User::findOne(4);
-//    $task = new Task();
-//    $task->title = 'bar';
-//    $task->description = 'jack';
-//    $task->created_at = time();
-//    $task->link(User::RELATION_CREATED_TASKS, $model);
-    $model = User::findAll()
+    $model = User::findOne(1);
+    $task = new Task();
+    $task->title = 'dinner';
+    $task->description = 'meat';
+    $task->created_at = time();
+    $task->link(User::RELATION_CREATED_TASKS, $model);
+    $model = User::findOne(2);
+    $task = new Task();
+    $task->title = 'sport';
+    $task->description = 'football';
+    $task->created_at = time();
+    $task->link(User::RELATION_CREATED_TASKS, $model);
+    $model = User::findOne(4);
+    $task = new Task();
+    $task->title = 'bar';
+    $task->description = 'jack';
+    $task->created_at = time();
+    $task->link(User::RELATION_CREATED_TASKS, $model);
 
+    $models = User::find()->with(User::RELATION_CREATED_TASKS)->all();
+    foreach($models as $item) {
+      _log($item->getCreatedTasks());
+    }
+
+    $models = User::find()->joinWith(User::RELATION_CREATED_TASKS)->all();
+    foreach($models as $item) {
+      _log($item->getCreatedTasks());
+    }
   }
 
   /**
