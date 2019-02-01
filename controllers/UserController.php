@@ -149,6 +149,9 @@ class UserController extends Controller
     foreach($models as $item) {
       _log($item->getCreatedTasks());
     }
+
+    $model = User::findOne(2);
+    _end($model->getAccessedTasks()->asArray()->all());
   }
 
   /**

@@ -86,6 +86,14 @@ class User extends \yii\db\ActiveRecord
   }
 
   /**
+   * @return \yii\db\ActiveQuery
+   */
+  public function getAccessedTasks()
+  {
+    return $this->hasMany(Task::className(), ['id' => 'task_id'])->via('taskUsers');
+  }
+
+  /**
    * {@inheritdoc}
    * @return \app\models\query\UserQuery the active query used by this AR class.
    */
