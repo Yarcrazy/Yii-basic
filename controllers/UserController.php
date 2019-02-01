@@ -6,6 +6,7 @@ use app\models\Task;
 use Yii;
 use app\models\User;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +22,15 @@ class UserController extends Controller
   public function behaviors()
   {
     return [
+      'access' => [
+        'class' => AccessControl::className(),
+        'rules' => [
+          [
+            'allow' => true,
+            'roles' => ['@'],
+          ],
+        ],
+      ],
       'verbs' => [
         'class' => VerbFilter::className(),
         'actions' => [
@@ -66,7 +76,6 @@ class UserController extends Controller
   public function actionCreate()
   {
     $model = new User();
-
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
       return $this->redirect(['view', 'id' => $model->id]);
     }

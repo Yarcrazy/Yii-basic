@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 use yii\web\IdentityInterface;
 
 /**
@@ -35,15 +37,26 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     return 'user';
   }
 
+  public function behaviors()
+  {
+    return [
+      TimestampBehavior::class,
+      ['class' => BlameableBehavior::class,
+        'createdByAttribute' => 'creator_id',
+        'updatedByAttribute' => 'updater_id',
+      ],
+    ];
+  }
+
   /**
    * {@inheritdoc}
    */
   public function rules()
   {
     return [
-      [['username', 'creator_id', 'created_at'], 'required'],
+      [['username', 'password'], 'required'],
       [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
-      [['username', 'password','password_hash', 'auth_key'], 'string', 'max' => 255],
+      [['username', 'password', 'auth_key'], 'string', 'max' => 255],
     ];
   }
 
@@ -149,11 +162,19 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     return $this->getAuthKey() === $authKey;
   }
 
+  /**
+   * @param string $insert
+   * @return bool
+   * @throws \yii\base\Exception
+   */
   public function beforeSave($insert)
   {
     if (parent::beforeSave($insert)) {
       if ($this->isNewRecord) {
         $this->auth_key = Yii::$app->security->generateRandomString();
+      }
+      if ($this->password) {
+        $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($this->password);
       }
       return true;
     }
@@ -179,6 +200,6 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
    */
   public function validatePassword($password)
   {
-    return $this->password === $password;
+    return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash);
   }
 }
