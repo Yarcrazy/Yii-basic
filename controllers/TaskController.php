@@ -6,6 +6,7 @@ use Yii;
 use app\models\Task;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -14,6 +15,7 @@ use yii\filters\VerbFilter;
  */
 class TaskController extends Controller
 {
+  public $defaultAction = 'my';
   /**
    * {@inheritdoc}
    */
@@ -38,6 +40,7 @@ class TaskController extends Controller
   {
     $dataProvider = new ActiveDataProvider([
       'query' => Task::find()->byCreator(Yii::$app->user->id),
+      //TODO также показывать расшаренные пользователю задачи
     ]);
 
     return $this->render('my', [
@@ -68,7 +71,8 @@ class TaskController extends Controller
     $model = new Task();
 
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
-      return $this->redirect(['view', 'id' => $model->id]);
+
+      return $this->redirect(['my']);
     }
 
     return $this->render('create', [
