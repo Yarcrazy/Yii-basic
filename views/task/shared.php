@@ -26,12 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
       'description:ntext',
 
       ['class' => 'yii\grid\ActionColumn',
-        'template' => '{unsharedAll} {update}',
+        'template' => '{unsharedAll}',
         'buttons' =>
           [
             'unsharedAll' => function ($url, $model, $key) {
               $icon = \yii\bootstrap\Html::icon('remove');
-              return Html::a($icon, ['task-user/create', 'taskId' => $model->id], [
+              return Html::a($icon, ['task-user/delete-all', 'taskId' => $model->id], [
                 'data' => [
                   'confirm' => 'Are you sure want to unshared this task to all users?',
                   'method' => 'post',

@@ -27,6 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
       'creator.username',
 			'created_at:datetime',
 
-      ],
+    ],
   ]); ?>
 </div>
