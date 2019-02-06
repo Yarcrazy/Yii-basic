@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Task;
 use yii\data\ActiveDataProvider;
+use yii\web\ConflictHttpException;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -40,10 +41,40 @@ class TaskController extends Controller
   {
     $dataProvider = new ActiveDataProvider([
       'query' => Task::find()->byCreator(Yii::$app->user->id),
-      //TODO также показывать расшаренные пользователю задачи
     ]);
 
     return $this->render('my', [
+      'dataProvider' => $dataProvider,
+    ]);
+  }
+
+  /**
+   * Lists shared Task models.
+   * @return mixed
+   */
+  public function actionShared()
+  {
+    $dataProvider = new ActiveDataProvider([
+      'query' => Task::find()->innerJoinWith(Task::RELATION_TASK_USERS),
+    ]);
+
+    return $this->render('shared', [
+      'dataProvider' => $dataProvider,
+    ]);
+  }
+
+  /**
+   * Lists accessed Task models.
+   * @return mixed
+   */
+  public function actionAccessed()
+  {
+    $dataProvider = new ActiveDataProvider([
+      'query' => Task::find()->innerJoinWith(Task::RELATION_TASK_USERS)
+      ->where(['user_id' => Yii::$app->user->id]),
+    ]);
+
+    return $this->render('accessed', [
       'dataProvider' => $dataProvider,
     ]);
   }
@@ -71,7 +102,7 @@ class TaskController extends Controller
     $model = new Task();
 
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
-
+      Yii::$app->session->setFlash('success', 'Task created successfully!');
       return $this->redirect(['my']);
     }
 
@@ -86,13 +117,18 @@ class TaskController extends Controller
    * @param integer $id
    * @return mixed
    * @throws NotFoundHttpException if the model cannot be found
+   * @throws ConflictHttpException if login user is not creator
    */
   public function actionUpdate($id)
   {
     $model = $this->findModel($id);
 
+    if ($model->creator_id != Yii::$app->user->id) {
+      throw new ConflictHttpException('No access to this task');
+    }
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
-      return $this->redirect(['view', 'id' => $model->id]);
+      Yii::$app->session->setFlash('success', 'Task updated successfully!');
+      return $this->redirect(['my']);
     }
 
     return $this->render('update', [
@@ -106,10 +142,16 @@ class TaskController extends Controller
    * @param integer $id
    * @return mixed
    * @throws NotFoundHttpException if the model cannot be found
+   * @throws ConflictHttpException if login user is not creator
    */
   public function actionDelete($id)
   {
-    $this->findModel($id)->delete();
+    $model = $this->findModel($id);
+    if ($model->creator_id != Yii::$app->user->id) {
+      throw new ConflictHttpException('No access to this task');
+    }
+    Yii::$app->session->setFlash('success', 'Task deleted successfully!');
+    $model->delete();
 
     return $this->redirect(['my']);
   }

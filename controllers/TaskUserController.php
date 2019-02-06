@@ -84,9 +84,6 @@ class TaskUserController extends Controller
 
     $users = User::find()->where(['<>', 'id', Yii::$app->user->id])->select('username')
       ->indexBy('id')->column();
-//    $users = TaskUser::find()->where(['task_id' => $taskId])->select('user_id')
-//      ->all();
-//    _end($users);
     return $this->render('create', [
       'users' => $users,
       'model' => $model,
