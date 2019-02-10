@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
       'description:ntext',
 
       ['class' => 'yii\grid\ActionColumn',
-        'template' => '{unsharedAll}',
+        'template' => '{view} {unsharedAll}',
         'buttons' =>
           [
             'unsharedAll' => function ($url, $model, $key) {

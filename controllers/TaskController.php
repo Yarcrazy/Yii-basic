@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\TaskUser;
 use Yii;
 use app\models\Task;
 use yii\data\ActiveDataProvider;
@@ -83,12 +84,25 @@ class TaskController extends Controller
    * Displays a single Task model.
    * @param integer $id
    * @return mixed
-   * @throws NotFoundHttpException if the model cannot be found
+   * @throws ForbiddenHttpException if login user is not a creator
    */
   public function actionView($id)
   {
+    $task = Task::findOne($id);
+    if ($task->creator_id != Yii::$app->user->id) {
+      throw new ForbiddenHttpException();
+    }
+
+    $query = TaskUser::find()
+      ->where(['task_id' => $id])
+      ->joinWith(TaskUser::RELATION_USER);
+    $dataProvider = new ActiveDataProvider([
+      'query' => $query,
+    ]);
+
     return $this->render('view', [
-      'model' => $this->findModel($id),
+      'model' => $task,
+      'dataProvider' => $dataProvider,
     ]);
   }
 

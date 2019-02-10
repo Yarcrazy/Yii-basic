@@ -38,7 +38,7 @@ class TaskUserController extends Controller
    * If creation is successful, the browser will be redirected to the 'view' page.
    * @param $taskId integer
    * @return mixed
-   * @throws ForbiddenHttpException
+   * @throws ForbiddenHttpException if the task cannot be found or login user is not a creator
    */
   public function actionCreate($taskId)
   {
@@ -87,10 +87,17 @@ class TaskUserController extends Controller
    * @param integer $id
    * @return mixed
    * @throws NotFoundHttpException if the model cannot be found
+   * @throws ForbiddenHttpException if login user is not creator
    */
   public function actionDelete($id)
   {
-    $this->findModel($id)->delete();
+    $taskUser = TaskUser::findOne($id);
+    $creatorId = Task::findOne(['id' => $taskUser->task_id])->creator_id;
+    if ($creatorId != Yii::$app->user->id) {
+      throw new ForbiddenHttpException();
+    }
+    $taskUser->delete();
+    Yii::$app->session->setFlash('success', 'Task unshared successfully!');
 
     return $this->redirect(['task/shared']);
   }
